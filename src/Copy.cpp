@@ -113,6 +113,7 @@ int main(int argc, char * argv[]) {
 
 		B->copyHostToDevice(true);
 		copy(A,B);
+		(copy.getTimer()).reset();
 		for ( unsigned int iter = 0; iter < nrIterations; iter++ ) {
 			B->copyHostToDevice();
 			copy(A, B);
