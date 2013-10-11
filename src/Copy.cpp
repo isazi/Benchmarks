@@ -124,8 +124,8 @@ int main(int argc, char * argv[]) {
 	}
 
 	cout << endl;
-	cout << "Time \t\t" << (copy.getTimer()).getAverageTime() << endl;
-	cout << "GB/s \t\t" << copy.getGB() / (copy.getTimer()).getAverageTime() << endl;
+	cout << "Time \t\t" << fixed << setprecision(6) << (copy.getTimer()).getAverageTime() << endl;
+	cout << "GB/s \t\t" << fixed << setprecision(3) << copy.getGB() / (copy.getTimer()).getAverageTime() << endl;
 	cout << endl;
 
 	return 0;
