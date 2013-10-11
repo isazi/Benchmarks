@@ -78,7 +78,7 @@ int main(int argc, char * argv[]) {
 	vector< cl::Device > * oclDevices = new vector< cl::Device >();
 	vector< vector< cl::CommandQueue > > * oclQueues = new vector< vector< cl::CommandQueue > >();
 	try {
-		initializeOpenCL(oclPlatformID, 1, oclPlatforms, oclContext, oclDevices, oclQueues);
+		initializeOpenCL(oclPlatform, 1, oclPlatforms, oclContext, oclDevices, oclQueues);
 	} catch ( OpenCLError err ) {
 		cerr << err.what() << endl;
 		return 1;
@@ -88,10 +88,10 @@ int main(int argc, char * argv[]) {
 	CLData< float > * B = new CLData< float >("B", true);
 
 	A->setCLContext(oclContext);
-	A->setCLQueue(&(oclQueues->at(device)[0]));
+	A->setCLQueue(&(oclQueues->at(oclDevice)[0]));
 	A->allocateHostData(arrayDim);
 	B->setCLContext(oclContext);
-	B->setCLQueue(&(oclQueues->at(device)[0]));
+	B->setCLQueue(&(oclQueues->at(oclDevice)[0]));
 	B->allocateHostData(arrayDim);
 	try {
 		A->setDeviceWriteOnly();
@@ -105,7 +105,7 @@ int main(int argc, char * argv[]) {
 
 	Copy< float > copy = Copy< float >("float");
 	try {
-		copy.bindOpenCL(oclContext, &(oclDevices->at(device)), &(oclQueues->at(device)[0]));
+		copy.bindOpenCL(oclContext, &(oclDevices->at(oclDevice)), &(oclQueues->at(oclDevice)[0]));
 		copy.setNrThreadsPerBlock(nrThreadsPerBlock);
 		copy.setNrThreads(arrayDim);
 		copy.setNrRows(nrRows);
