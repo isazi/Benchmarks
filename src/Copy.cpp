@@ -115,9 +115,7 @@ int main(int argc, char * argv[]) {
 		copy(A,B);
 		(copy.getTimer()).reset();
 		for ( unsigned int iter = 0; iter < nrIterations; iter++ ) {
-			B->copyHostToDevice();
 			copy(A, B);
-			A->copyDeviceToHost();
 		}
 	} catch ( OpenCLError err ) {
 		cerr << err.what() << endl;
@@ -125,8 +123,7 @@ int main(int argc, char * argv[]) {
 	}
 
 	cout << endl;
-	cout << "Time \t\t" << fixed << setprecision(6) << (copy.getTimer()).getAverageTime() << endl;
-	cout << "GB/s \t\t" << fixed << setprecision(3) << copy.getGB() / (copy.getTimer()).getAverageTime() << endl;
+	cout << fixed << setprecision(3) << copy.getGB() / (copy.getTimer()).getAverageTime() << endl;
 	cout << endl;
 
 	return 0;
