@@ -35,13 +35,13 @@ using std::pow;
 #include <InitializeOpenCL.hpp>
 #include <CLData.hpp>
 #include <Exceptions.hpp>
-#include <kernels/Copy.hpp>
+#include <Copy.hpp>
 #include <utils.hpp>
 using isa::utils::ArgumentList;
 using isa::OpenCL::initializeOpenCL;
 using isa::OpenCL::CLData;
 using isa::Exceptions::OpenCLError;
-using isa::OpenCL::Copy;
+using isa::Benchmarks::Copy;
 using isa::utils::same;
 
 const unsigned int nrIterations = 10;

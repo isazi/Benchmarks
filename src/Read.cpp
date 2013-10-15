@@ -35,13 +35,13 @@ using std::pow;
 #include <InitializeOpenCL.hpp>
 #include <CLData.hpp>
 #include <Exceptions.hpp>
-#include <kernels/Read.hpp>
+#include <Read.hpp>
 #include <utils.hpp>
 using isa::utils::ArgumentList;
 using isa::OpenCL::initializeOpenCL;
 using isa::OpenCL::CLData;
 using isa::Exceptions::OpenCLError;
-using isa::OpenCL::Read;
+using isa::Benchmarks::Read;
 using isa::utils::same;
 
 const unsigned int nrIterations = 10;
