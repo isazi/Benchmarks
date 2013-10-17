@@ -80,7 +80,7 @@ int main(int argc, char * argv[]) {
 		cerr << err.what() << endl;
 		return 1;
 	}
-	(oclDevices->at(oclDevices)).getInfo< unsigned int >(CL_DEVICE_MAX_MEM_ALLOC_SIZE, &arrayDim);
+	(oclDevices->at(oclDevice)).getInfo< unsigned int >(CL_DEVICE_MAX_MEM_ALLOC_SIZE, &arrayDim);
 	arrayDim /= 4;
 
 	CLData< float > * A = new CLData< float >("A", true);
