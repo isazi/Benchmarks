@@ -81,7 +81,7 @@ int main(int argc, char * argv[]) {
 		return 1;
 	}
 	arrayDim = (oclDevices->at(oclDevice)).getInfo< CL_DEVICE_MAX_MEM_ALLOC_SIZE >();
-	arrayDim /= 4;
+	arrayDim /= sizeof(float);
 
 	CLData< float > * A = new CLData< float >("A", true);
 	CLData< float > * B = new CLData< float >("B", true);

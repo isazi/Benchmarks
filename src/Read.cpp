@@ -51,12 +51,11 @@ int main(int argc, char * argv[]) {
 	unsigned int oclPlatform = 0;
 	unsigned int oclDevice = 0;
 	unsigned int arrayDim = 0;
-	unsigned int nrThreadsPerBlock = 0;
-	unsigned int nrRows = 0;
+	unsigned int maxThreads = 0;
 
 	// Parse command line
-	if ( argc != 11 ) {
-		cerr << "Usage: " << argv[0] << " -opencl_platform <opencl_platform> -opencl_device <opencl_device> -n <dim> -t <threads_per_block> -r <rows>" << endl;
+	if ( argc != 7 ) {
+		cerr << "Usage: " << argv[0] << " -opencl_platform <opencl_platform> -opencl_device <opencl_device> -m <max_threads>" << endl;
 		return 1;
 	}
 
@@ -83,6 +82,8 @@ int main(int argc, char * argv[]) {
 		cerr << err.what() << endl;
 		return 1;
 	}
+	arrayDim = (oclDevices->at(oclDevice)).getInfo< CL_DEVICE_MAX_MEM_ALLOC_SIZE >();
+	arrayDim /= sizeof(float);
 
 	CLData< float > * B = new CLData< float >("B", true);
 
@@ -97,27 +98,35 @@ int main(int argc, char * argv[]) {
 		return 1;
 	}
 
-	Read< float > read = Read< float >("float");
-	try {
-		read.bindOpenCL(oclContext, &(oclDevices->at(oclDevice)), &(oclQueues->at(oclDevice)[0]));
-		read.setNrThreadsPerBlock(nrThreadsPerBlock);
-		read.setNrThreads(arrayDim);
-		read.setNrRows(nrRows);
-		read.generateCode();
+	cout << fixed << setprecision(3) << endl;
+	for (unsigned int threads0 = 2; threads0 <= maxThreads; threads0 *= 2 ) {
+		for (unsigned int threads1 = 1; threads1 <= 32; threads1++ ) {
+			if ( (arrayDim % (threads0 * threads1) != 0) || ((threads0 * threads1) > maxThreads) ) {
+				continue;
+			}
 
-		B->copyHostToDevice(true);
-		read(B);
-		(read.getTimer()).reset();
-		for ( unsigned int iter = 0; iter < nrIterations; iter++ ) {
-			read(B);
+			Read< float > read = Read< float >("float");
+			try {
+				read.bindOpenCL(oclContext, &(oclDevices->at(oclDevice)), &(oclQueues->at(oclDevice)[0]));
+				read.setNrThreads(arrayDim);
+				read.setNrThreadsPerBlock(threads0);
+				read.setNrRows(threads1);
+				read.generateCode();
+
+				B->copyHostToDevice(true);
+				read(B);
+				(read.getTimer()).reset();
+				for ( unsigned int iter = 0; iter < nrIterations; iter++ ) {
+					read(B);
+				}
+			} catch ( OpenCLError err ) {
+				cerr << err.what() << endl;
+				return 1;
+			}
+
+			cout << threads0 << " " << threads1 << " " << read.getGB() / (read.getTimer()).getAverageTime() << endl;
 		}
-	} catch ( OpenCLError err ) {
-		cerr << err.what() << endl;
-		return 1;
 	}
-
-	cout << endl;
-	cout << fixed << setprecision(3) << read.getGB() / (read.getTimer()).getAverageTime() << endl;
 	cout << endl;
 
 	return 0;
