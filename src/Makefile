@@ -21,7 +21,7 @@ LDFLAGS         := -lm -lOpenCL
 CC			:= g++
 LINKER		:= g++
 
-all: clean Copy Read
+all: clean Copy Read Write
 
 Copy: Copy.cpp
 	$(LINKER) -o $(PROJ_BASE)/bin/CopyBenchmark $(INCLUDES) $(LIBS) Copy.cpp $(CFLAGS) $(LDFLAGS)
@@ -29,6 +29,10 @@ Copy: Copy.cpp
 Read: Read.cpp
 	$(LINKER) -o $(PROJ_BASE)/bin/ReadBenchmark $(INCLUDES) $(LIBS) Read.cpp $(CFLAGS) $(LDFLAGS)
 
+Write: Write.cpp
+	$(LINKER) -o $(PROJ_BASE)/bin/WriteBenchmark $(INCLUDES) $(LIBS) Write.cpp $(CFLAGS) $(LDFLAGS)
+
 clean:
 	rm -f $(PROJ_BASE)/bin/CopyBenchmark
 	rm -f $(PROJ_BASE)/bin/ReadBenchmark
+	rm -f $(PROJ_BASE)/bin/WriteBenchmark
