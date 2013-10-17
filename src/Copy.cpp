@@ -51,12 +51,11 @@ int main(int argc, char * argv[]) {
 	unsigned int oclPlatform = 0;
 	unsigned int oclDevice = 0;
 	unsigned int arrayDim = 0;
-	unsigned int nrThreadsPerBlock = 0;
-	unsigned int nrRows = 0;
+	unsigned int maxThreads = 0;
 
 	// Parse command line
-	if ( argc != 11 ) {
-		cerr << "Usage: " << argv[0] << " -opencl_platform <opencl_platform> -opencl_device <opencl_device> -n <dim> -t <threads_per_block> -r <rows>" << endl;
+	if ( argc != 7 ) {
+		cerr << "Usage: " << argv[0] << " -opencl_platform <opencl_platform> -opencl_device <opencl_device> -m <max_threads>" << endl;
 		return 1;
 	}
 
@@ -64,9 +63,7 @@ int main(int argc, char * argv[]) {
 	try {
 		oclPlatform = commandLine.getSwitchArgument< unsigned int >("-opencl_platform");
 		oclDevice = commandLine.getSwitchArgument< unsigned int >("-opencl_device");
-		arrayDim = commandLine.getSwitchArgument< unsigned int >("-n");
-		nrThreadsPerBlock = commandLine.getSwitchArgument< unsigned int >("-t");
-		nrRows = commandLine.getSwitchArgument< unsigned int >("-r");
+		maxThreads = commandLine.getSwitchArgument< unsigned int >("-max_threads");
 	} catch ( exception & err ) {
 		cerr << err.what() << endl;
 		return 1;
@@ -83,6 +80,8 @@ int main(int argc, char * argv[]) {
 		cerr << err.what() << endl;
 		return 1;
 	}
+	(oclDevices->at(oclDevices)).getInfo< unsigned int >(CL_DEVICE_MAX_MEM_ALLOC_SIZE, &arrayDim);
+	arrayDim /= 4;
 
 	CLData< float > * A = new CLData< float >("A", true);
 	CLData< float > * B = new CLData< float >("B", true);
@@ -96,34 +95,42 @@ int main(int argc, char * argv[]) {
 	try {
 		A->setDeviceWriteOnly();
 		A->allocateDeviceData();
-		B->setDeviceReadOnly();
+		B->setDeviceWriteOnly();
 		B->allocateDeviceData();
 	} catch ( OpenCLError err ) {
 		cerr << err.what() << endl;
 		return 1;
 	}
 
-	Copy< float > copy = Copy< float >("float");
-	try {
-		copy.bindOpenCL(oclContext, &(oclDevices->at(oclDevice)), &(oclQueues->at(oclDevice)[0]));
-		copy.setNrThreadsPerBlock(nrThreadsPerBlock);
-		copy.setNrThreads(arrayDim);
-		copy.setNrRows(nrRows);
-		copy.generateCode();
+	cout << fixed << setprecision(3) << endl;
+	for (unsigned int threads0 = 2; threads0 <= maxThreads; threads0 *= 2 ) {
+		for (unsigned int threads1 = 1; threads1 <= 32; threads1++ ) {
+			if ( (threads0 * threads1) > maxThreads ) {
+				continue;
+			}
+			Copy< float > copy = Copy< float >("float");
+			try {
+				copy.bindOpenCL(oclContext, &(oclDevices->at(oclDevice)), &(oclQueues->at(oclDevice)[0]));
+				copy.setNrThreads(arrayDim);
+				copy.setNrThreadsPerBlock(threads0);				
+				copy.setNrRows(threads1);
+				copy.generateCode();
 
-		B->copyHostToDevice(true);
-		copy(A,B);
-		(copy.getTimer()).reset();
-		for ( unsigned int iter = 0; iter < nrIterations; iter++ ) {
-			copy(A, B);
+				B->copyHostToDevice(true);
+				copy(A,B);
+				(copy.getTimer()).reset();
+				for ( unsigned int iter = 0; iter < nrIterations; iter++ ) {
+					copy(A, B);
+				}
+			} catch ( OpenCLError err ) {
+				cerr << err.what() << endl;
+				return 1;
+			}
+
+			cout << threads0 << " " << threads1 << " " << copy.getGB() / (copy.getTimer()).getAverageTime() << endl;
+			
 		}
-	} catch ( OpenCLError err ) {
-		cerr << err.what() << endl;
-		return 1;
 	}
-
-	cout << endl;
-	cout << fixed << setprecision(3) << copy.getGB() / (copy.getTimer()).getAverageTime() << endl;
 	cout << endl;
 
 	return 0;
