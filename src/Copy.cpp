@@ -80,7 +80,7 @@ int main(int argc, char * argv[]) {
 		cerr << err.what() << endl;
 		return 1;
 	}
-	(oclDevices->at(oclDevice)).getInfo< unsigned int >(CL_DEVICE_MAX_MEM_ALLOC_SIZE, &arrayDim);
+	arrayDim = (oclDevices->at(oclDevice)).getInfo< CL_DEVICE_MAX_MEM_ALLOC_SIZE >();
 	arrayDim /= 4;
 
 	CLData< float > * A = new CLData< float >("A", true);
@@ -105,7 +105,7 @@ int main(int argc, char * argv[]) {
 	cout << fixed << setprecision(3) << endl;
 	for (unsigned int threads0 = 2; threads0 <= maxThreads; threads0 *= 2 ) {
 		for (unsigned int threads1 = 1; threads1 <= 32; threads1++ ) {
-			if ( (threads0 * threads1) > maxThreads ) {
+			if ( (arrayDim / (threads0 * threads1) != 0) || ((threads0 * threads1) > maxThreads) ) {
 				continue;
 			}
 			Copy< float > copy = Copy< float >("float");
