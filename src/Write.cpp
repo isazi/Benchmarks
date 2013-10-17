@@ -51,12 +51,11 @@ int main(int argc, char * argv[]) {
 	unsigned int oclPlatform = 0;
 	unsigned int oclDevice = 0;
 	unsigned int arrayDim = 0;
-	unsigned int nrThreadsPerBlock = 0;
-	unsigned int nrRows = 0;
+	unsigned int maxThreads = 0;
 
 	// Parse command line
-	if ( argc != 11 ) {
-		cerr << "Usage: " << argv[0] << " -opencl_platform <opencl_platform> -opencl_device <opencl_device> -n <dim> -t <threads_per_block> -r <rows>" << endl;
+	if ( argc != 7 ) {
+		cerr << "Usage: " << argv[0] << " -opencl_platform <opencl_platform> -opencl_device <opencl_device> -m <max_threads>" << endl;
 		return 1;
 	}
 
@@ -64,9 +63,7 @@ int main(int argc, char * argv[]) {
 	try {
 		oclPlatform = commandLine.getSwitchArgument< unsigned int >("-opencl_platform");
 		oclDevice = commandLine.getSwitchArgument< unsigned int >("-opencl_device");
-		arrayDim = commandLine.getSwitchArgument< unsigned int >("-n");
-		nrThreadsPerBlock = commandLine.getSwitchArgument< unsigned int >("-t");
-		nrRows = commandLine.getSwitchArgument< unsigned int >("-r");
+		maxThreads = commandLine.getSwitchArgument< unsigned int >("-max_threads");
 	} catch ( exception & err ) {
 		cerr << err.what() << endl;
 		return 1;
@@ -83,6 +80,8 @@ int main(int argc, char * argv[]) {
 		cerr << err.what() << endl;
 		return 1;
 	}
+	arrayDim = (oclDevices->at(oclDevice)).getInfo< CL_DEVICE_MAX_MEM_ALLOC_SIZE >();
+	arrayDim /= sizeof(float);
 
 	CLData< float > * A = new CLData< float >("A", true);
 
@@ -97,27 +96,35 @@ int main(int argc, char * argv[]) {
 		return 1;
 	}
 
-	Write< float > write = Write< float >("float");
-	try {
-		write.bindOpenCL(oclContext, &(oclDevices->at(oclDevice)), &(oclQueues->at(oclDevice)[0]));
-		write.setNrThreadsPerBlock(nrThreadsPerBlock);
-		write.setNrThreads(arrayDim);
-		write.setNrRows(nrRows);
-		write.generateCode();
+		cout << fixed << setprecision(3) << endl;
+	for (unsigned int threads0 = 2; threads0 <= maxThreads; threads0 *= 2 ) {
+		for (unsigned int threads1 = 1; threads1 <= 32; threads1++ ) {
+			if ( (arrayDim % (threads0 * threads1) != 0) || ((threads0 * threads1) > maxThreads) ) {
+				continue;
+			}
 
-		write(A);
-		(write.getTimer()).reset();
-		for ( unsigned int iter = 0; iter < nrIterations; iter++ ) {
-			write(A);
+			Write< float > write = Write< float >("float");
+			try {
+				write.bindOpenCL(oclContext, &(oclDevices->at(oclDevice)), &(oclQueues->at(oclDevice)[0]));
+				write.setNrThreads(arrayDim);
+				write.setNrThreadsPerBlock(threads0);
+				write.setNrRows(threads1);
+				write.generateCode();
+
+				write(A);
+				(write.getTimer()).reset();
+				for ( unsigned int iter = 0; iter < nrIterations; iter++ ) {
+					write(A);
+				}
+				A->copyDeviceToHost(true);
+			} catch ( OpenCLError err ) {
+				cerr << err.what() << endl;
+				return 1;
+			}
+
+			cout << threads0 << " " << threads1 << " " << write.getGB() / (write.getTimer()).getAverageTime() << endl;
 		}
-		A->copyDeviceToHost(true);
-	} catch ( OpenCLError err ) {
-		cerr << err.what() << endl;
-		return 1;
 	}
-
-	cout << endl;
-	cout << fixed << setprecision(3) << write.getGB() / (write.getTimer()).getAverageTime() << endl;
 	cout << endl;
 
 	return 0;
