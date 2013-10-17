@@ -63,9 +63,7 @@ int main(int argc, char * argv[]) {
 	try {
 		oclPlatform = commandLine.getSwitchArgument< unsigned int >("-opencl_platform");
 		oclDevice = commandLine.getSwitchArgument< unsigned int >("-opencl_device");
-		arrayDim = commandLine.getSwitchArgument< unsigned int >("-n");
-		nrThreadsPerBlock = commandLine.getSwitchArgument< unsigned int >("-t");
-		nrRows = commandLine.getSwitchArgument< unsigned int >("-r");
+		maxThreads = commandLine.getSwitchArgument< unsigned int >("-max_threads");
 	} catch ( exception & err ) {
 		cerr << err.what() << endl;
 		return 1;
