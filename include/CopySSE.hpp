@@ -33,7 +33,7 @@ void copySSE(float * const __restrict__ a, const float * const __restrict__ b, c
 // Implementation
 
 void copySSE(float * const __restrict__ a, const float * const __restrict__ b, const long long unsigned int size) {
-	#pragma omp parallel for
+	#pragma omp parallel for schedule(static)
 	for ( long long unsigned int item = 0; item < size; item += 4 ) {
 		_mm_store_ps(a + item, _mm_load_ps(b + item));
 	}

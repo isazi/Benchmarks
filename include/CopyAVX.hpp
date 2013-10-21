@@ -33,7 +33,7 @@ void copyAVX(float * const __restrict__ a, const float * const __restrict__ b, c
 // Implementation
 
 void copyAVX(float * const __restrict__ a, const float * const __restrict__ b, const long long unsigned int size) {
-	#pragma omp parallel for
+	#pragma omp parallel for schedule(static)
 	for ( long long unsigned int item = 0; item < size; item += 8 ) {
 		_mm256_store_ps(a + item, _mm256_load_ps(b + item));
 	}
