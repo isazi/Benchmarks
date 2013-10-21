@@ -17,6 +17,9 @@
  *
  */
 
+#include <x86intrin.h>
+#include <omp.h>
+
 #include <kernels/Kernel.hpp>
 #include <CLData.hpp>
 #include <Exceptions.hpp>
