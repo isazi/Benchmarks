@@ -32,7 +32,7 @@ using std::ceil;
 using std::pow;
 
 #include <ArgumentList.hpp>
-#include <CopySIMD.hpp>
+#include <CopySSE.hpp>
 #include <Timer.hpp>
 #include <utils.hpp>
 using isa::utils::ArgumentList;

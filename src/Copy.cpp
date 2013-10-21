@@ -108,6 +108,7 @@ int main(int argc, char * argv[]) {
 			if ( (arrayDim % (threads0 * threads1) != 0) || ((threads0 * threads1) > maxThreads) ) {
 				continue;
 			}
+			
 			Copy< float > copy = Copy< float >("float");
 			try {
 				copy.bindOpenCL(oclContext, &(oclDevices->at(oclDevice)), &(oclQueues->at(oclDevice)[0]));

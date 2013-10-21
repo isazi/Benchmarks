@@ -12,11 +12,12 @@ LIBS		:=
 OPENCL 		:= -I"$(OPENCL_INCLUDE)" -I"$(ISA_OPENCL_INCLUDE)" -L"$(OPENCL_LIB)"
 
 ifneq ($(debug), 1)
-	CFLAGS		:= -std=c++0x -O3 -g0 -Wall
+	CFLAGS		:= -std=c++0x -O3 -g0 -Wall -fopenmp
 else
 	CFLAGS		:= -std=c++0x -O0 -g3 -Wall
 endif
-CFLAGS_SSE		:= $(CFLAGS) -mavx -fopenmp
+CFLAGS_SSE		:= $(CFLAGS) -msse2 
+CFLAGS_AVX		:= $(CFLAGS) -avx
 LDFLAGS         := -lm
 LDFLAGS_OPENCL	:= $(LDFLAGS) -lOpenCL
 

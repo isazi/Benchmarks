@@ -21,27 +21,16 @@
 #include <omp.h>
 
 
-#ifndef COPY_SIMD_HPP
-#define COPY_SIMD_HPP
+#ifndef COPY_AVX_HPP
+#define COPY_AVX_HPP
 
 namespace isa {
 namespace Benchmarks {
 
-// SSE
-void copySSE(float * const __restrict__ a, const float * const __restrict__ b, const long long unsigned int size);
-
-// AVX
 void copyAVX(float * const __restrict__ a, const float * const __restrict__ b, const long long unsigned int size);
 
 
 // Implementation
-
-void copySSE(float * const __restrict__ a, const float * const __restrict__ b, const long long unsigned int size) {
-	//#pragma omp parallel for
-	for ( long long unsigned int item = 0; item < size; item += 4 ) {
-		_mm_store_ps(a + item, _mm_load_ps(b + item));
-	}
-}
 
 void copyAVX(float * const __restrict__ a, const float * const __restrict__ b, const long long unsigned int size) {
 	#pragma omp parallel for
@@ -53,4 +42,4 @@ void copyAVX(float * const __restrict__ a, const float * const __restrict__ b, c
 } // Benchmarks
 } // isa
 
-#endif // COPY_SIMD_HPP 
+#endif // COPY_AVX_HPP 
