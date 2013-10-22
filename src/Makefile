@@ -32,6 +32,9 @@ Copy: Copy.cpp
 CopySSE: CopySSE.cpp
 	$(LINKER) -o $(PROJ_BASE)/bin/CopySSEBenchmark $(INCLUDES) $(LIBS) CopySSE.cpp $(CFLAGS_SSE) $(LDFLAGS)
 
+CopyAVX: CopyAVX.cpp
+	$(LINKER) -o $(PROJ_BASE)/bin/CopyAVXBenchmark $(INCLUDES) $(LIBS) CopyAVX.cpp $(CFLAGS_AVX) $(LDFLAGS)
+
 Read: Read.cpp
 	$(LINKER) -o $(PROJ_BASE)/bin/ReadBenchmark $(INCLUDES) $(LIBS) $(OPENCL) Read.cpp $(CFLAGS) $(LDFLAGS_OPENCL)
 
@@ -41,5 +44,6 @@ Write: Write.cpp
 clean:
 	rm -f $(PROJ_BASE)/bin/CopyBenchmark
 	rm -f $(PROJ_BASE)/bin/CopySSEBenchmark
+	rm -f $(PROJ_BASE)/bin/CopyAVXBenchmark
 	rm -f $(PROJ_BASE)/bin/ReadBenchmark
 	rm -f $(PROJ_BASE)/bin/WriteBenchmark
