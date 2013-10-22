@@ -24,7 +24,7 @@ LDFLAGS_OPENCL	:= $(LDFLAGS) -lOpenCL
 CC			:= g++
 LINKER		:= g++
 
-all: clean Copy CopySSE Read Write
+all: clean Copy CopySSE CopyAVX Read ReadSSE ReadAVX Write
 
 Copy: Copy.cpp
 	$(LINKER) -o $(PROJ_BASE)/bin/CopyBenchmark $(INCLUDES) $(LIBS) $(OPENCL) Copy.cpp $(CFLAGS) $(LDFLAGS_OPENCL)
@@ -38,6 +38,12 @@ CopyAVX: CopyAVX.cpp
 Read: Read.cpp
 	$(LINKER) -o $(PROJ_BASE)/bin/ReadBenchmark $(INCLUDES) $(LIBS) $(OPENCL) Read.cpp $(CFLAGS) $(LDFLAGS_OPENCL)
 
+ReadSSE: ReadSSE.cpp
+	$(LINKER) -o $(PROJ_BASE)/bin/ReadSSEBenchmark $(INCLUDES) $(LIBS) ReadSSE.cpp $(CFLAGS_SSE) $(LDFLAGS)
+
+ReadAVX: ReadAVX.cpp
+	$(LINKER) -o $(PROJ_BASE)/bin/ReadAVXBenchmark $(INCLUDES) $(LIBS) ReadAVX.cpp $(CFLAGS_AVX) $(LDFLAGS)
+
 Write: Write.cpp
 	$(LINKER) -o $(PROJ_BASE)/bin/WriteBenchmark $(INCLUDES) $(LIBS) $(OPENCL) Write.cpp $(CFLAGS) $(LDFLAGS_OPENCL)
 
@@ -46,4 +52,6 @@ clean:
 	rm -f $(PROJ_BASE)/bin/CopySSEBenchmark
 	rm -f $(PROJ_BASE)/bin/CopyAVXBenchmark
 	rm -f $(PROJ_BASE)/bin/ReadBenchmark
+	rm -f $(PROJ_BASE)/bin/ReadSSEBenchmark
+	rm -f $(PROJ_BASE)/bin/ReadAVXBenchmark
 	rm -f $(PROJ_BASE)/bin/WriteBenchmark
