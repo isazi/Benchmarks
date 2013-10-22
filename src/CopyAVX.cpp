@@ -32,11 +32,11 @@ using std::ceil;
 using std::pow;
 
 #include <ArgumentList.hpp>
-#include <CopySSE.hpp>
+#include <CopyAVX.hpp>
 #include <Timer.hpp>
 #include <utils.hpp>
 using isa::utils::ArgumentList;
-using isa::Benchmarks::copySSE;
+using isa::Benchmarks::copyAVX;
 using isa::utils::Timer;
 using isa::utils::same;
 using isa::utils::giga;
@@ -61,18 +61,18 @@ int main(int argc, char * argv[]) {
 		return 1;
 	}
 
-	Timer copyTimer = Timer("copySSE");
+	Timer copyTimer = Timer("copyAVX");
 	float * A = new float [arrayDim];
 	float * B = new float [arrayDim];
 
-	copySSE(A, B, arrayDim);
+	copyAVX(A, B, arrayDim);
 	for ( unsigned int iter = 0; iter < nrIterations; iter++ ) {
 		copyTimer.start();
-		copySSE(A, B, arrayDim);
+		copyAVX(A, B, arrayDim);
 		copyTimer.stop();
 	}
 
-	cout << fixed << setprecision(3) << giga(arrayDim * sizeof(float)) / copyTimer.getAverageTime() << endl;
+	cout << fixed << setprecision(3) << giga(2 * arrayDim * sizeof(float)) / copyTimer.getAverageTime() << endl;
 
 	return 0;
 }

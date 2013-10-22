@@ -72,7 +72,7 @@ int main(int argc, char * argv[]) {
 		copyTimer.stop();
 	}
 
-	cout << fixed << setprecision(3) << giga(arrayDim * sizeof(float)) / copyTimer.getAverageTime() << endl;
+	cout << fixed << setprecision(3) << giga(2 * arrayDim * sizeof(float)) / copyTimer.getAverageTime() << endl;
 
 	return 0;
 }
