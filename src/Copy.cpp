@@ -95,7 +95,7 @@ int main(int argc, char * argv[]) {
 	try {
 		A->setDeviceWriteOnly();
 		A->allocateDeviceData();
-		B->setDeviceWriteOnly();
+		B->setDeviceReadOnly();
 		B->allocateDeviceData();
 	} catch ( OpenCLError err ) {
 		cerr << err.what() << endl;
