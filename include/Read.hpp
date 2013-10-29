@@ -17,7 +17,7 @@
  *
  */
 
-#include <kernels/Kernel.hpp>
+#include <Kernel.hpp>
 #include <CLData.hpp>
 #include <Exceptions.hpp>
 #include <utils.hpp>
