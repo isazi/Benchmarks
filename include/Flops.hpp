@@ -32,7 +32,7 @@ using isa::utils::toStringValue;
 
 namespace isa {
 
-namespace OpenCL {
+namespace Benchmarks {
 
 template < typename T > class Flops : public Kernel< T > {
 public:
@@ -112,7 +112,7 @@ template< typename T > inline void Flops< T >::setNrIterations(unsigned int iter
 	nrItenations = iteration;
 }
 
-} // OpenCL
+} // Benchmarks
 } // isa
 
 #endif // FLOPS_HPP
