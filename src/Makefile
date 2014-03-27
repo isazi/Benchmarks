@@ -56,6 +56,9 @@ WriteAVX: WriteAVX.cpp
 VectorAdd: VectorAdd.cpp
 	$(LINKER) -o $(PROJ_BASE)/bin/VectorAddBenchmark $(INCLUDES) $(LIBS) $(OPENCL) VectorAdd.cpp $(CFLAGS) $(LDFLAGS_OPENCL)
 
+Flops: Flops.cpp ../include/Flops.hpp
+	$(LINKER) -o $(PROJ_BASE)/bin/FlopsBenchmark $(INCLUDES) $(LIBS) $(OPENCL) Flops.cpp $(CFLAGS) $(LDFLAGS_OPENCL)
+
 clean:
 	rm -f $(PROJ_BASE)/bin/CopyBenchmark
 	rm -f $(PROJ_BASE)/bin/CopySSEBenchmark
@@ -67,3 +70,4 @@ clean:
 	rm -f $(PROJ_BASE)/bin/WriteSSEBenchmark
 	rm -f $(PROJ_BASE)/bin/WriteAVXBenchmark
 	rm -f $(PROJ_BASE)/bin/VectorAddBenchmark
+	rm -f $(PROJ_BASE)/bin/FlopsBenchmark
