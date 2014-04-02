@@ -60,12 +60,9 @@ template< typename T > Flops< T >::Flops(string dataType) : Kernel< T >("Flops",
 
 
 template< typename T > void Flops< T >::generateCode() throw (OpenCLError) {
-	long long unsigned int ops = static_cast< long long unsigned int >(nrThreads * nrIterations * 2);
-	long long unsigned int memOps = nrThreads * 2 * sizeof(T);
+	long long unsigned int ops = static_cast< long long unsigned int >(nrThreads) * nrIterations * 2;
 
-	this->arInt = ops / static_cast< double >(memOps);
 	this->gflop = giga(ops);
-	this->gb = giga(memOps);
 
 	delete this->code;
 	this->code = new string();
