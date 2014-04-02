@@ -66,14 +66,14 @@ template< typename T > void Flops< T >::generateCode() throw (OpenCLError) {
 	this->arInt = ops / static_cast< double >(memOps);
 	this->gflop = giga(ops);
 	this->gb = giga(memOps);
-	
+
 	delete this->code;
 	this->code = new string();
 	*(this->code) = "__kernel void " + this->name + "(__global const " + this->dataType + " * const restrict A, __global " + this->dataType + " * const restrict C) {\n"
 		"const unsigned int id = ( get_global_id(1) * get_global_size(0) ) + get_global_id(0);\n"
 		+ this->dataType + " a = A[id];\n"
 		+ this->dataType + " total = 0;\n"
-		"for ( iteration = 0; nrItenations < " + toStringValue< unsigned int >(nrItenations) + "; iteration++ ) {\n"
+		"for ( iteration = 0; nrIterations < " + toStringValue< unsigned int >(nrIterations) + "; iteration++ ) {\n"
 		"total += (a * get_local_id(0);\n"
 		"}\n"
 		"C[id] = total;\n"
@@ -109,7 +109,7 @@ template< typename T > inline void Flops< T >::setNrRows(unsigned int rows) {
 }
 
 template< typename T > inline void Flops< T >::setNrIterations(unsigned int iteration) {
-	nrItenations = iteration;
+	nrIterations = iteration;
 }
 
 } // Benchmarks
