@@ -70,11 +70,11 @@ template< typename T > void Flops< T >::generateCode() throw (OpenCLError) {
 	delete this->code;
 	this->code = new string();
 	*(this->code) = "__kernel void " + this->name + "(__global const " + this->dataType + " * const restrict A, __global " + this->dataType + " * const restrict C) {\n"
-		"const unsigned int id = ( get_global_id(1) * get_global_size(0) ) + get_global_id(0);\n"
+		"const unsigned int id = (get_global_id(1) * get_global_size(0)) + get_global_id(0);\n"
 		+ this->dataType + " a = A[id];\n"
 		+ this->dataType + " total = 0;\n"
 		"for ( unsigned int iteration = 0; iteration < " + toStringValue< unsigned int >(nrIterations) + "; iteration++ ) {\n"
-		"total += (a * get_local_id(0);\n"
+		"total += (a * get_local_id(0));\n"
 		"}\n"
 		"C[id] = total;\n"
 		"}";
