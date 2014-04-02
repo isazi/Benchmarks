@@ -39,19 +39,19 @@ using isa::Benchmarks::Flops;
 using isa::utils::same;
 
 const unsigned int nrIterations = 10;
-const unsigned int nrLoops = 100;
 
 
 int main(int argc, char * argv[]) {
 	unsigned int oclPlatform = 0;
 	unsigned int oclDevice = 0;
 	unsigned int arrayDim = 0;
+	unsigned int nrLoops = 0;
 	unsigned int minThreads = 0;
 	unsigned int maxThreads = 0;
 
 	// Parse command line
-	if ( argc != 9 ) {
-		cerr << "Usage: " << argv[0] << " -opencl_platform <opencl_platform> -opencl_device <opencl_device> -min <min_threads> -max <max_threads>" << endl;
+	if ( argc != 11 ) {
+		cerr << "Usage: " << argv[0] << " -opencl_platform <opencl_platform> -opencl_device <opencl_device> -loops <nr_loops> -min <min_threads> -max <max_threads>" << endl;
 		return 1;
 	}
 
@@ -59,6 +59,7 @@ int main(int argc, char * argv[]) {
 	try {
 		oclPlatform = commandLine.getSwitchArgument< unsigned int >("-opencl_platform");
 		oclDevice = commandLine.getSwitchArgument< unsigned int >("-opencl_device");
+		nrLoops = commandLine.getSwitchArgument< unsigned int >("-loops");
 		minThreads = commandLine.getSwitchArgument< unsigned int >("-min");
 		maxThreads = commandLine.getSwitchArgument< unsigned int >("-max");
 	} catch ( exception & err ) {
