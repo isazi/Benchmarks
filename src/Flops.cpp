@@ -123,7 +123,7 @@ int main(int argc, char * argv[]) {
 				flops.generateCode();
 
 				flops(A, C);
-				(flops.getTimer()).reset();
+				flops.reset();
 				for ( unsigned int iter = 0; iter < nrIterations; iter++ ) {
 					flops(A, C);
 				}
