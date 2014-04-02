@@ -60,7 +60,7 @@ template< typename T > Flops< T >::Flops(string dataType) : Kernel< T >("Flops",
 
 
 template< typename T > void Flops< T >::generateCode() throw (OpenCLError) {
-	long long unsigned int ops = static_cast< long long unsigned int >(nrThreads) * nrIterations * 2;
+	long long unsigned int ops = static_cast< long long unsigned int >(nrThreads) * nrIterations * 8;
 
 	this->gflop = giga(ops);
 
@@ -71,6 +71,9 @@ template< typename T > void Flops< T >::generateCode() throw (OpenCLError) {
 		+ this->dataType + " a = A[id];\n"
 		+ this->dataType + " total = 0;\n"
 		"for ( unsigned int iteration = 0; iteration < " + toStringValue< unsigned int >(nrIterations) + "; iteration++ ) {\n"
+		"total += (a * get_local_id(0));\n"
+		"total += (a * get_local_id(0));\n"
+		"total += (a * get_local_id(0));\n"
 		"total += (a * get_local_id(0));\n"
 		"}\n"
 		"C[id] = total;\n"
