@@ -105,7 +105,8 @@ int main(int argc, char * argv[]) {
 		return 1;
 	}
 
-	cout << fixed << setprecision(3) << endl;
+	cout << fixed;
+	cout << arrayDim << endl;
 	for (unsigned int threads0 = minThreads; threads0 <= maxThreads; threads0 *= 2 ) {
 		for (unsigned int threads1 = 1; threads1 <= 32; threads1++ ) {
 			if ( (arrayDim % (threads0 * threads1) != 0) || ((threads0 * threads1) > maxThreads) ) {
@@ -131,7 +132,7 @@ int main(int argc, char * argv[]) {
 				return 1;
 			}
 
-			cout << threads0 << " " << threads1 << " " << flops.getGFLOPs() << " " << flops.getTimer().getAverageTime() << endl;
+			cout << threads0 << " " << threads1 << " " << setprecision(3) << flops.getGFLOPs() << " " << setprecision(6) << flops.getTimer().getAverageTime() << endl;
 
 		}
 	}
