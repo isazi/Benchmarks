@@ -131,7 +131,7 @@ int main(int argc, char * argv[]) {
 				return 1;
 			}
 
-			cout << threads0 << " " << threads1 << " " << flops.getGFLOPs() << " " << flops.getGBs() << endl;
+			cout << threads0 << " " << threads1 << " " << flops.getGFLOPs() << " " << flops.getTimer().getAverageTime() << endl;
 
 		}
 	}
