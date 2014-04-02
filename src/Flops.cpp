@@ -88,7 +88,7 @@ int main(int argc, char * argv[]) {
 	A->allocateHostData(arrayDim);
 	srand(time(NULL));
 	for ( unsigned int i = 0; i < arrayDim; i++ ) {
-		(*A)[i] = 1.0f / static_cast< float >(rand() % 15);
+		A->setHostDataItem(i, 1.0f / static_cast< float >(rand() % 15));
 	}
 	C->setCLContext(oclContext);
 	C->setCLQueue(&(oclQueues->at(oclDevice)[0]));
@@ -110,12 +110,12 @@ int main(int argc, char * argv[]) {
 			if ( (arrayDim % (threads0 * threads1) != 0) || ((threads0 * threads1) > maxThreads) ) {
 				continue;
 			}
-			
+
 			Flops< float > flops = Flops< float >("float");
 			try {
 				flops.bindOpenCL(oclContext, &(oclDevices->at(oclDevice)), &(oclQueues->at(oclDevice)[0]));
 				flops.setNrThreads(arrayDim);
-				flops.setNrThreadsPerBlock(threads0);				
+				flops.setNrThreadsPerBlock(threads0);
 				flops.setNrRows(threads1);
 				flops.setNrIterations(nrLoops);
 				flops.generateCode();
@@ -131,7 +131,7 @@ int main(int argc, char * argv[]) {
 			}
 
 			cout << threads0 << " " << threads1 << " " << flops.getGFLOPs() << " " << flops.getGBs() << endl;
-			
+
 		}
 	}
 	cout << endl;
