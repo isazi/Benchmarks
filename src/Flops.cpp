@@ -74,7 +74,7 @@ int main(int argc, char * argv[]) {
 	vector< vector< cl::CommandQueue > > * oclQueues = new vector< vector< cl::CommandQueue > >();
 	try {
 		initializeOpenCL(oclPlatform, 1, oclPlatforms, oclContext, oclDevices, oclQueues);
-	} catch ( OpenCLError err ) {
+	} catch ( OpenCLError &err ) {
 		cerr << err.what() << endl;
 		return 1;
 	}
@@ -100,7 +100,7 @@ int main(int argc, char * argv[]) {
 		A->copyHostToDevice();
 		C->setDeviceWriteOnly();
 		C->allocateDeviceData();
-	} catch ( OpenCLError err ) {
+	} catch ( OpenCLError &err ) {
 		cerr << err.what() << endl;
 		return 1;
 	}
@@ -127,7 +127,7 @@ int main(int argc, char * argv[]) {
 				for ( unsigned int iter = 0; iter < nrIterations; iter++ ) {
 					flops(A, C);
 				}
-			} catch ( OpenCLError err ) {
+			} catch ( OpenCLError &err ) {
 				cerr << err.what() << endl;
 				return 1;
 			}
