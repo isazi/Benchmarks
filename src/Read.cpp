@@ -51,11 +51,13 @@ int main(int argc, char * argv[]) {
 	unsigned int oclPlatform = 0;
 	unsigned int oclDevice = 0;
 	unsigned int arrayDim = 0;
+	unsigned int minThreads = 0;
 	unsigned int maxThreads = 0;
+	unsigned int nrLoops = 0;
 
 	// Parse command line
-	if ( argc != 7 ) {
-		cerr << "Usage: " << argv[0] << " -opencl_platform <opencl_platform> -opencl_device <opencl_device> -m <max_threads>" << endl;
+	if ( argc != 11 ) {
+		cerr << "Usage: " << argv[0] << " -opencl_platform <opencl_platform> -opencl_device <opencl_device> -min <min_threads> -max <max_threads> -loops <nr_loops>" << endl;
 		return 1;
 	}
 
@@ -63,7 +65,9 @@ int main(int argc, char * argv[]) {
 	try {
 		oclPlatform = commandLine.getSwitchArgument< unsigned int >("-opencl_platform");
 		oclDevice = commandLine.getSwitchArgument< unsigned int >("-opencl_device");
-		maxThreads = commandLine.getSwitchArgument< unsigned int >("-max_threads");
+		minThreads = commandLine.getSwitchArgument< unsigned int >("-min");
+		maxThreads = commandLine.getSwitchArgument< unsigned int >("-max");
+		nrLoops = commandLine.getSwitchArgument< unsigned int >("-loops");
 	} catch ( exception & err ) {
 		cerr << err.what() << endl;
 		return 1;
@@ -76,7 +80,7 @@ int main(int argc, char * argv[]) {
 	vector< vector< cl::CommandQueue > > * oclQueues = new vector< vector< cl::CommandQueue > >();
 	try {
 		initializeOpenCL(oclPlatform, 1, oclPlatforms, oclContext, oclDevices, oclQueues);
-	} catch ( OpenCLError err ) {
+	} catch ( OpenCLError &err ) {
 		cerr << err.what() << endl;
 		return 1;
 	}
@@ -88,16 +92,21 @@ int main(int argc, char * argv[]) {
 	B->setCLContext(oclContext);
 	B->setCLQueue(&(oclQueues->at(oclDevice)[0]));
 	B->allocateHostData(arrayDim);
+	C->setCLContext(oclContext);
+	C->setCLQueue(&(oclQueues->at(oclDevice)[0]));
+	C->allocateHostData(arrayDim);
 	try {
 		B->setDeviceReadOnly();
 		B->allocateDeviceData();
-	} catch ( OpenCLError err ) {
+		C->setDeviceWriteOnly();
+		C->allocateDeviceData();
+	} catch ( OpenCLError &err ) {
 		cerr << err.what() << endl;
 		return 1;
 	}
 
-	cout << fixed << setprecision(3) << endl;
-	for (unsigned int threads0 = 2; threads0 <= maxThreads; threads0 *= 2 ) {
+	cout << fixed;
+	for (unsigned int threads0 = minThreads; threads0 <= maxThreads; threads0 *= 2 ) {
 		for (unsigned int threads1 = 1; threads1 <= 32; threads1++ ) {
 			if ( (arrayDim % (threads0 * threads1) != 0) || ((threads0 * threads1) > maxThreads) ) {
 				continue;
@@ -109,6 +118,7 @@ int main(int argc, char * argv[]) {
 				read.setNrThreads(arrayDim);
 				read.setNrThreadsPerBlock(threads0);
 				read.setNrRows(threads1);
+				read.setNrIterations(nrLoops);
 				read.generateCode();
 
 				B->copyHostToDevice(true);
@@ -117,12 +127,12 @@ int main(int argc, char * argv[]) {
 				for ( unsigned int iter = 0; iter < nrIterations; iter++ ) {
 					read(B);
 				}
-			} catch ( OpenCLError err ) {
+			} catch ( OpenCLError &err ) {
 				cerr << err.what() << endl;
 				return 1;
 			}
 
-			cout << threads0 << " " << threads1 << " " << read.getGB() / (read.getTimer()).getAverageTime() << endl;
+			cout << threads0 << " " << threads1 << " " << setprecision(3) << read.getGBs() << " " << setprecision(6) << read.getTimer().getAverageTime() << endl;
 		}
 	}
 	cout << endl;

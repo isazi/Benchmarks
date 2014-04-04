@@ -44,11 +44,13 @@ public:
 	inline void setNrThreadsPerBlock(unsigned int threads);
 	inline void setNrThreads(unsigned int threads);
 	inline void setNrRows(unsigned int rows);
+	inline void setNrIterations(unsigned int iterations);
 
 private:
 	unsigned int nrThreadsPerBlock;
 	unsigned int nrThreads;
 	unsigned int nrRows;
+	unsigned int nrIterations;
 };
 
 
@@ -58,13 +60,17 @@ template< typename T > Read< T >::Read(string dataType) : Kernel< T >("Read", da
 
 
 template< typename T > void Read< T >::generateCode() throw (OpenCLError) {
-	this->gb = giga(static_cast< long long unsigned int >(nrThreads) * sizeof(T));
-	
+	this->gb = giga(static_cast< long long unsigned int >(nrThreads) * nrIterations * sizeof(T));
+
 	delete this->code;
 	this->code = new string();
-	*(this->code) = "__kernel void " + this->name + "(__global const " +  this->dataType + " * const restrict B) {\n"
+	*(this->code) = "__kernel void " + this->name + "(__global const " +  this->dataType + " * const restrict B, __global " + this->dataType + " * const restrict C) {\n"
 		"const unsigned int id = ( get_global_id(1) * get_global_size(0) ) + get_global_id(0);\n"
 		+ this->dataType + " item = B[id];\n"
+		"for ( unsigned int iteration = 0; iteration < " + toStringValue< unsigned int >(nrIterations) + "; iteration++ ) {\n"
+		"item = B[id];\n"
+		"}\n"
+		"C[id] = item;\n"
 		"}";
 
 	this->compile();
@@ -93,6 +99,10 @@ template< typename T > inline void Read< T >::setNrThreads(unsigned int threads)
 
 template< typename T > inline void Read< T >::setNrRows(unsigned int rows) {
 	nrRows = rows;
+}
+
+template< typename T > inline void Read< T >::setNrIterations(unsigned int iterations) {
+	nrIterations = iterations;
 }
 
 } // Benchmarks
