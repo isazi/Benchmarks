@@ -126,7 +126,7 @@ int main(int argc, char * argv[]) {
 				read(B);
 				(read.getTimer()).reset();
 				for ( unsigned int iter = 0; iter < nrIterations; iter++ ) {
-					read(B);
+					read(B, C);
 				}
 			} catch ( OpenCLError &err ) {
 				cerr << err.what() << endl;
