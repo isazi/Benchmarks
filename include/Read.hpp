@@ -39,7 +39,7 @@ public:
 	Read(string dataType);
 
 	void generateCode() throw (OpenCLError);
-	void operator()(CLData< T > * b) throw (OpenCLError);
+	void operator()(CLData< T > * b, CLData< T > * c) throw (OpenCLError);
 
 	inline void setNrThreadsPerBlock(unsigned int threads);
 	inline void setNrThreads(unsigned int threads);
@@ -77,11 +77,12 @@ template< typename T > void Read< T >::generateCode() throw (OpenCLError) {
 }
 
 
-template< typename T > void Read< T >::operator()(CLData< T > * b) throw (OpenCLError) {
+template< typename T > void Read< T >::operator()(CLData< T > * b, CLData< T > * c) throw (OpenCLError) {
 	cl::NDRange globalSize(nrThreads / nrRows, nrRows);
 	cl::NDRange localSize(nrThreadsPerBlock, 1);
 
 	this->setArgument(0, *(b->getDeviceData()));
+	this->setArgument(1, *(c->getDeviceData()));
 
 	this->run(globalSize, localSize);
 }

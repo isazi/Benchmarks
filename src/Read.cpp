@@ -88,6 +88,7 @@ int main(int argc, char * argv[]) {
 	arrayDim /= sizeof(float);
 
 	CLData< float > * B = new CLData< float >("B", true);
+	CLData< float > * C = new CLData< float >("C", true);
 
 	B->setCLContext(oclContext);
 	B->setCLQueue(&(oclQueues->at(oclDevice)[0]));
