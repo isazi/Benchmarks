@@ -108,8 +108,8 @@ template< typename T > inline void Flops< T >::setNrRows(unsigned int rows) {
 	nrRows = rows;
 }
 
-template< typename T > inline void Flops< T >::setNrIterations(unsigned int iteration) {
-	nrIterations = iteration;
+template< typename T > inline void Flops< T >::setNrIterations(unsigned int iterations) {
+	nrIterations = iterations;
 }
 
 } // Benchmarks
