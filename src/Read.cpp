@@ -123,7 +123,7 @@ int main(int argc, char * argv[]) {
 				read.generateCode();
 
 				B->copyHostToDevice(true);
-				read(B);
+				read(B, C);
 				(read.getTimer()).reset();
 				for ( unsigned int iter = 0; iter < nrIterations; iter++ ) {
 					read(B, C);
