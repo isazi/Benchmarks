@@ -65,11 +65,11 @@ int main(int argc, char * argv[]) {
   std::vector< dataType > A(N);
   std::vector< dataType > B(N);
   std::vector< dataType > C(N);
-  cl::Error A_d, B_d, C_d;
+  cl::Buffer A_d, B_d, C_d;
   try {
-    A_d = cl::Error(*clContext, CL_MEM_READ_ONLY, A.size() * sizeof(dataType), NULL, NULL);
-    B_d = cl::Error(*clContext, CL_MEM_READ_ONLY, B.size() * sizeof(dataType), NULL, NULL);
-    C_d = cl::Error(*clContext, CL_MEM_WRITE_ONLY, C.size() * sizeof(dataType), NULL, NULL);
+    A_d = cl::Buffer(*clContext, CL_MEM_READ_ONLY, A.size() * sizeof(dataType), NULL, NULL);
+    B_d = cl::Buffer(*clContext, CL_MEM_READ_ONLY, B.size() * sizeof(dataType), NULL, NULL);
+    C_d = cl::Buffer(*clContext, CL_MEM_WRITE_ONLY, C.size() * sizeof(dataType), NULL, NULL);
   } catch ( cl::Error & err ) {
     std::cerr << "OpenCL error allocating memory: " << isa::utils::toString(err.err()) << "." << std::endl;
   }
