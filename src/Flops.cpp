@@ -68,9 +68,9 @@ int main(int argc, char * argv[]) {
   std::vector< dataType > B(N);
   cl::Buffer A_d, B_d, C_d;
   try {
-    A_d = cl::Buffer(*clContext, CL_MEM_READ_ONLY, A.size() * sizeof(dataType), NULL, NULL);
-    B_d = cl::Buffer(*clContext, CL_MEM_READ_ONLY, B.size() * sizeof(dataType), NULL, NULL);
-    C_d = cl::Buffer(*clContext, CL_MEM_WRITE_ONLY, A.size() * sizeof(dataType), NULL, NULL);
+    A_d = cl::Buffer(*clContext, CL_MEM_READ_ONLY, A.size() * sizeof(dataType), 0, 0);
+    B_d = cl::Buffer(*clContext, CL_MEM_READ_ONLY, B.size() * sizeof(dataType), 0, 0);
+    C_d = cl::Buffer(*clContext, CL_MEM_WRITE_ONLY, A.size() * sizeof(dataType), 0, 0);
   } catch ( cl::Error & err ) {
     std::cerr << "OpenCL error allocating memory: " << isa::utils::toString(err.err()) << "." << std::endl;
   }
@@ -83,8 +83,8 @@ int main(int argc, char * argv[]) {
 
   // Copy data structures to device
   try {
-    clQueues->at(clDevice)[0].enqueueWriteBuffer(A_d, CL_FALSE, 0, A.size() * sizeof(dataType), reinterpret_cast< void * >(A.data()), NULL, NULL);
-    clQueues->at(clDevice)[0].enqueueWriteBuffer(B_d, CL_FALSE, 0, B.size() * sizeof(dataType), reinterpret_cast< void * >(B.data()), NULL, NULL);
+    clQueues->at(clDevice)[0].enqueueWriteBuffer(A_d, CL_FALSE, 0, A.size() * sizeof(dataType), reinterpret_cast< void * >(A.data()), 0, 0);
+    clQueues->at(clDevice)[0].enqueueWriteBuffer(B_d, CL_FALSE, 0, B.size() * sizeof(dataType), reinterpret_cast< void * >(B.data()), 0, 0);
   } catch ( cl::Error & err ) {
     std::cerr << "OpenCL error H2D transfer: " << isa::utils::toString(err.err()) << "." << std::endl;
     return 1;
@@ -120,10 +120,11 @@ int main(int argc, char * argv[]) {
         kernel->setArg(1, B_d);
         kernel->setArg(2, C_d);
         // Warm-up
-        clQueues->at(clDevice)[0].enqueueNDRangeKernel(*kernel, cl::NullRange, global, local);
+        clQueues->at(clDevice)[0].enqueueNDRangeKernel(*kernel, cl::NullRange, global, local, 0, &kernelSync);
+        kernelSync.wait();
         for ( unsigned int iteration = 0; iteration < iterations; iteration++ ) {
           kernelTimer.start();
-          clQueues->at(clDevice)[0].enqueueNDRangeKernel(*kernel, cl::NullRange, global, local, NULL, &kernelSync);
+          clQueues->at(clDevice)[0].enqueueNDRangeKernel(*kernel, cl::NullRange, global, local, 0, &kernelSync);
           kernelSync.wait();
           kernelTimer.stop();
           kernelStats.addElement(flops / kernelTimer.getLastRunTime());
