@@ -23,6 +23,8 @@
 #include <InitializeOpenCL.hpp>
 #include <Kernel.hpp>
 #include <utils.hpp>
+#include <Timer.hpp>
+#include <Stats.hpp>
 #include <VectorAdd.hpp>
 
 typedef float dataType;
