@@ -48,7 +48,7 @@ int main(int argc, char * argv[]) {
     threadUnit = args.getSwitchArgument< unsigned int >("-thread_unit");
     maxThreads = args.getSwitchArgument< unsigned int >("-max_threads");
   } catch ( isa::utils::EmptyCommandLine & err ) {
-    std::cerr << args.getName() << " -opencl_platform ... -opencl_device ... -vector ... - iterations ... -N ... -thread_unit ... -max_threads ..." << std::endl;
+    std::cerr << args.getName() << " -opencl_platform ... -opencl_device ... - iterations ... -N ... -thread_unit ... -max_threads ..." << std::endl;
     return 1;
   } catch ( std::exception & err ) {
     std::cerr << err.what() << std::endl;
