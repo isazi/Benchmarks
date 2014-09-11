@@ -65,11 +65,9 @@ int main(int argc, char * argv[]) {
 
   // Allocate memory
   std::vector< dataType > A(N);
-  std::vector< dataType > B(N);
   cl::Buffer A_d, B_d, C_d;
   try {
     A_d = cl::Buffer(*clContext, CL_MEM_READ_ONLY, A.size() * sizeof(dataType), NULL, NULL);
-    B_d = cl::Buffer(*clContext, CL_MEM_READ_ONLY, B.size() * sizeof(dataType), NULL, NULL);
     C_d = cl::Buffer(*clContext, CL_MEM_WRITE_ONLY, A.size() * sizeof(dataType), NULL, NULL);
   } catch ( cl::Error & err ) {
     std::cerr << "OpenCL error allocating memory: " << isa::utils::toString(err.err()) << "." << std::endl;
@@ -78,13 +76,11 @@ int main(int argc, char * argv[]) {
   std::srand(std::time(0));
   for ( unsigned int n = 0; n < N; n++ ) {
     A[n] = static_cast< dataType >(std::rand() % 100);
-    B[n] = A[n];
   }
 
   // Copy data structures to device
   try {
     clQueues->at(clDevice)[0].enqueueWriteBuffer(A_d, CL_FALSE, 0, A.size() * sizeof(dataType), reinterpret_cast< void * >(A.data()), NULL, NULL);
-    clQueues->at(clDevice)[0].enqueueWriteBuffer(B_d, CL_FALSE, 0, B.size() * sizeof(dataType), reinterpret_cast< void * >(B.data()), NULL, NULL);
   } catch ( cl::Error & err ) {
     std::cerr << "OpenCL error H2D transfer: " << isa::utils::toString(err.err()) << "." << std::endl;
     return 1;
@@ -111,14 +107,13 @@ int main(int argc, char * argv[]) {
       }
 
       try {
-        double gbs = isa::utils::giga(static_cast< long long unsigned int >(N) * 3 * sizeof(dataType));
+        double gbs = isa::utils::giga(static_cast< long long unsigned int >(N) * 2 * sizeof(dataType));
         cl::Event kernelSync;
         cl::NDRange global(N / vector);
         cl::NDRange local(threads);
         
         kernel->setArg(0, A_d);
-        kernel->setArg(1, B_d);
-        kernel->setArg(2, C_d);
+        kernel->setArg(1, C_d);
         // Warm-up
         clQueues->at(clDevice)[0].enqueueNDRangeKernel(*kernel, cl::NullRange, global, local);
         for ( unsigned int iteration = 0; iteration < iterations; iteration++ ) {
