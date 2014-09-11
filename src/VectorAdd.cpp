@@ -92,7 +92,13 @@ int main(int argc, char * argv[]) {
   }
 
   for ( unsigned int threads = threadUnit; threads < maxThreads; threads += threadUnit ) {
+    if ( (N % threads) != 0 ) {
+      continue;
+    }
     for ( unsigned int vector = 1; vector < 16; vector *= 2 ) {
+      if ( (N % (threads * vector)) != 0 ) {
+        continue;
+      }
       cl::Kernel * kernel;
       isa::utils::Timer kernelTimer("Kernel Timer");
       isa::utils::Stats< double > kernelStats;
