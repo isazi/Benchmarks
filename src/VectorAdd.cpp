@@ -91,11 +91,11 @@ int main(int argc, char * argv[]) {
     return 1;
   }
 
-  for ( unsigned int threads = threadUnit; threads < maxThreads; threads += threadUnit ) {
+  for ( unsigned int threads = threadUnit; threads <= maxThreads; threads += threadUnit ) {
     if ( (N % threads) != 0 ) {
       continue;
     }
-    for ( unsigned int vector = 1; vector < 16; vector *= 2 ) {
+    for ( unsigned int vector = 1; vector <= 16; vector *= 2 ) {
       if ( (N % (threads * vector)) != 0 ) {
         continue;
       }
