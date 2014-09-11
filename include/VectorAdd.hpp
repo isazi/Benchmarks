@@ -31,7 +31,7 @@ std::string * getVectorAddOpenCL(const unsigned int iterations, const unsigned i
   std::string * code = new std::string();
 
   if ( vector == 1 ) {
-    *code = "__kernel void vectorAdd(const " + dataType + " * restrict const A, const " + dataType + " * restrict const B, " + dataType + " * C) {\n"
+    *code = "__kernel void vectorAdd(__global const " + dataType + " * restrict const A, __global const " + dataType + " * restrict const B, __global " + dataType + " * C) {\n"
       + dataType + " a;\n"
       + dataType + " b;\n"
       + dataType + " c;\n"
@@ -44,7 +44,7 @@ std::string * getVectorAddOpenCL(const unsigned int iterations, const unsigned i
       "C[get_global_id(0)] = c;\n"
       "}\n";
   } else {
-    *code = "__kernel void vectorAdd(const " + dataType + " * restrict const A, const " + dataType + " * restrict const B, " + dataType + " * C) {\n"
+    *code = "__kernel void vectorAdd(__global const " + dataType + " * restrict const A, __global const " + dataType + " * restrict const B, __global " + dataType + " * C) {\n"
       + dataType + isa::utils::toString(vector) + " a;\n"
       + dataType + isa::utils::toString(vector) + " b;\n"
       + dataType + isa::utils::toString(vector) + " c;\n"
