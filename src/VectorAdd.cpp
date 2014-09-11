@@ -112,7 +112,7 @@ int main(int argc, char * argv[]) {
       }
 
       try {
-        double flops = isa::utils::giga(static_cast< long long unsigned int >(threads) * iterations);
+        double flops = isa::utils::giga(static_cast< long long unsigned int >(N) * iterations);
         cl::Event kernelSync;
         cl::NDRange global(N / vector);
         cl::NDRange local(threads);
