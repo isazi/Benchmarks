@@ -104,7 +104,6 @@ int main(int argc, char * argv[]) {
         std::cerr << err.what() << std::endl;
         return 1;
       }
-      std::cout << *code << std::endl;
 
       try {
         double flops = isa::utils::giga(static_cast< long long unsigned int >(threads) * iterations);
