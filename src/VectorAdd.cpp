@@ -34,7 +34,8 @@ std::string typeName("float");
 int main(int argc, char * argv[]) {
   unsigned int clPlatform = 0;
   unsigned int clDevice = 0;
-  unsigned int iterations = 0;
+  unsigned int extIterations = 0;
+  unsigned int intIterations = 0;
   unsigned int N = 0;
   unsigned int threadUnit = 0;
   unsigned int maxThreads = 0;
@@ -43,12 +44,13 @@ int main(int argc, char * argv[]) {
   try {
     clPlatform = args.getSwitchArgument< unsigned int >("-opencl_platform");
     clDevice = args.getSwitchArgument< unsigned int >("-opencl_device");
-    iterations = args.getSwitchArgument< unsigned int >("-iterations");
+    extIterations = args.getSwitchArgument< unsigned int >("-extIterations");
+    intIterations = args.getSwitchArgument< unsigned int >("-intIterations");
     N = args.getSwitchArgument< unsigned int >("-N");
     threadUnit = args.getSwitchArgument< unsigned int >("-thread_unit");
     maxThreads = args.getSwitchArgument< unsigned int >("-max_threads");
   } catch ( isa::utils::EmptyCommandLine & err ) {
-    std::cerr << args.getName() << " -opencl_platform ... -opencl_device ... -iterations ... -N ... -thread_unit ... -max_threads ..." << std::endl;
+    std::cerr << args.getName() << " -opencl_platform ... -opencl_device ... -extIterations ... -intIterations ... -N ... -thread_unit ... -max_threads ..." << std::endl;
     return 1;
   } catch ( std::exception & err ) {
     std::cerr << err.what() << std::endl;
@@ -102,7 +104,7 @@ int main(int argc, char * argv[]) {
       isa::utils::Timer kernelTimer("Kernel Timer");
       isa::utils::Stats< double > kernelFlops;
       isa::utils::Stats< double > kernelBandwidth;
-      std::string * code = isa::Benchmarks::getVectorAddOpenCL(iterations, vector, typeName);
+      std::string * code = isa::Benchmarks::getVectorAddOpenCL(intIterations, vector, typeName);
       
       try {
         kernel = isa::OpenCL::compile("vectorAdd", *code, "-cl-mad-enable -Werror", *clContext, clDevices->at(clDevice));
@@ -112,7 +114,7 @@ int main(int argc, char * argv[]) {
       }
 
       try {
-        double flops = isa::utils::giga(static_cast< long long unsigned int >(N) * iterations);
+        double flops = isa::utils::giga(static_cast< long long unsigned int >(N) * extIterations);
         double gbs = isa::utils::giga(static_cast< long long unsigned int >(N) * 3 * sizeof(dataType));
         cl::Event kernelSync;
         cl::NDRange global(N / vector);
@@ -125,7 +127,7 @@ int main(int argc, char * argv[]) {
         clQueues->at(clDevice)[0].enqueueNDRangeKernel(*kernel, cl::NullRange, global, local, 0, &kernelSync);
         kernelSync.wait();
 
-        for ( unsigned int iteration = 0; iteration < iterations; iteration++ ) {
+        for ( unsigned int iteration = 0; iteration < extIterations; iteration++ ) {
           kernelTimer.start();
           clQueues->at(clDevice)[0].enqueueNDRangeKernel(*kernel, cl::NullRange, global, local, 0, &kernelSync);
           kernelSync.wait();
