@@ -17,7 +17,13 @@
 #include <utils.hpp>
 
 
-std::string  * getVectorAddOpenCL(const unsigned int iterations, const unsigned int vector, const std::string & dataType);
+#ifndef VECTOR_ADD_HPP
+#define VECTOR_ADD_HPP
+
+namespace isa {
+namespace Benchmarks {
+
+  std::string  * getVectorAddOpenCL(const unsigned int iterations, const unsigned int vector, const std::string & dataType);
 
 
 // Implementations
@@ -63,4 +69,9 @@ std::string * getVectorAddOpenCL(const unsigned int iterations, const unsigned i
 
   return code;
 }
+
+} // Benchmarks
+} // isa
+
+#endif
 
