@@ -100,7 +100,8 @@ int main(int argc, char * argv[]) {
       }
       cl::Kernel * kernel;
       isa::utils::Timer kernelTimer("Kernel Timer");
-      isa::utils::Stats< double > kernelStats;
+      isa::utils::Stats< double > kernelFlops;
+      isa::utils::Stats< double > kernelBandwidth;
       std::string * code = isa::Benchmarks::getVectorAddOpenCL(iterations, vector, typeName);
       
       try {
@@ -112,6 +113,7 @@ int main(int argc, char * argv[]) {
 
       try {
         double flops = isa::utils::giga(static_cast< long long unsigned int >(N) * iterations);
+        double gbs = isa::utils::giga(static_cast< long long unsigned int >(N) * 3 * sizeof(dataType));
         cl::Event kernelSync;
         cl::NDRange global(N / vector);
         cl::NDRange local(threads);
@@ -128,7 +130,8 @@ int main(int argc, char * argv[]) {
           clQueues->at(clDevice)[0].enqueueNDRangeKernel(*kernel, cl::NullRange, global, local, 0, &kernelSync);
           kernelSync.wait();
           kernelTimer.stop();
-          kernelStats.addElement(flops / kernelTimer.getLastRunTime());
+          kernelFlops.addElement(flops / kernelTimer.getLastRunTime());
+          kernelBandwidth.addElement(gbs / kernelTimer.getLastRunTime());
         }
       } catch ( cl::Error & err ) {
         std::cerr << "OpenCL error kernel execution: " << isa::utils::toString(err.err()) << "." << std::endl;
@@ -137,7 +140,8 @@ int main(int argc, char * argv[]) {
       std::cout << std::fixed;
       std::cout << threads << " " << vector << " ";
       std::cout << std::setprecision(3);
-      std::cout << kernelStats.getAverage() << " " << kernelStats.getStdDev() << " ";
+      std::cout << kernelFlops.getAverage() << " " << kernelFlops.getStdDev() << " ";
+      std::cout << kernelBandwidth.getAverage() << " " << kernelBandwidth.getStdDev() << " ";
       std::cout << std::setprecision(6);
       std::cout << kernelTimer.getAverageTime() << " " << kernelTimer.getStdDev();
       std::cout << std::endl;
