@@ -116,10 +116,10 @@ int main(int argc, char * argv[]) {
         kernel->setArg(1, B_d);
         kernel->setArg(2, C_d);
         // Warm-up
-        clQueues->at(clDeviceID)[0].enqueueNDRangeKernel(*kernel, cl::NullRange, global, local);
+        clQueues->at(clDevice)[0].enqueueNDRangeKernel(*kernel, cl::NullRange, global, local);
         for ( unsigned int iteration = 0; iteration < iterations; iteration++ ) {
           kernelTimer.start();
-          clQueues->at(clDeviceID)[0].enqueueNDRangeKernel(*kernel, cl::NullRange, global, local, NULL, &kernelSync);
+          clQueues->at(clDevice)[0].enqueueNDRangeKernel(*kernel, cl::NullRange, global, local, NULL, &kernelSync);
           kernelSync.wait();
           kernelTimer.stop();
           kernelStats.addElement(flops / kernelTimer.getLastRunTime());
