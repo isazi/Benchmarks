@@ -135,7 +135,7 @@ int main(int argc, char * argv[]) {
     }
 
     std::cout << std::fixed;
-    std::cout << threads << " " << vector << " ";
+    std::cout << threads << " ";
     std::cout << std::setprecision(3);
     std::cout << kernelGFlops.getAverage() << " " << kernelGFlops.getStdDev() << " ";
     std::cout << kernelGBs.getAverage() << " " << kernelGBs.getStdDev() << " ";
