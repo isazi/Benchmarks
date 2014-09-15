@@ -74,7 +74,7 @@ std::string * getFlopsOpenCL(const unsigned int iterations, const unsigned int v
 std::string * getFlopsOpenCL4x2(const unsigned int iterations, const std::string & dataType) {
   std::string * code = new std::string();
 
-  *code = "__kernel void flops(__global const " + dataType + " * restrict const A, __global const " + dataType + " * restrict const B, __global " + dataType + " * C) {\n"
+  *code = "__kernel void flops4x2(__global const " + dataType + " * restrict const A, __global const " + dataType + " * restrict const B, __global " + dataType + " * C) {\n"
     + dataType + "4 temp;\n"
     + dataType + "2 a_0;\n"
     + dataType + "2 a_1;\n"
