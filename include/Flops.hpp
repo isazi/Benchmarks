@@ -83,17 +83,17 @@ std::string * getFlopsOpenCL4x2(const unsigned int iterations, const std::string
     + dataType + "2 c_0;\n"
     + dataType + "2 c_1;\n"
     // Load
-    "temp = vload" + "4(0, &(A[get_global_id(0) * " + isa::utils::toString(vector) + "]));\n"
+    "temp = vload" + "4(0, &(A[get_global_id(0) * 4]));\n"
     "a_0 = (" + dataType + "2)(temp.s0, temp.s1);\n"
     "a_1 = (" + dataType + "2)(temp.s2, temp.s3);\n"
-    "temp = vload" + "4(0, &(B[get_global_id(0) * " + isa::utils::toString(vector) + "]));\n"
+    "temp = vload" + "4(0, &(B[get_global_id(0) * 4]));\n"
     "b_0 = (" + dataType + "2)(temp.s0, temp.s1);\n"
     "b_1 = (" + dataType + "2)(temp.s2, temp.s3);\n"
     // Compute
     "<%COMPUTE%>"
     // Store
     "temp = (" + dataType + "4)(c_0.s0, c_0.s1, c_1.s0, c_1.s1);\n"
-    "vstore" + "4(temp, 0, &(C[get_global_id(0) * " + isa::utils::toString(vector) + "]));\n"
+    "vstore" + "4(temp, 0, &(C[get_global_id(0) * 4]));\n"
     "}\n";
   std::string computeTemplate = "c_0 = (a_0 + b_0) * get_local_id(0);\n"
     "c_1 = (a_1 + b_1) * get_local_id(0);\n";
