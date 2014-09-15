@@ -110,7 +110,7 @@ int main(int argc, char * argv[]) {
     }
 
     try {
-      double flops = isa::utils::giga(static_cast< long long unsigned int >(N) * 2 * iterations);
+      double flops = isa::utils::giga(static_cast< long long unsigned int >(N) * 2 * intIterations);
       double gbs = isa::utils::giga(static_cast< long long unsigned int >(N) * 3 * sizeof(dataType));
       cl::Event kernelSync;
       cl::NDRange global(N / 4);
