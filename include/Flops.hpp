@@ -23,7 +23,7 @@
 namespace isa {
 namespace Benchmarks {
 
-  std::string  * getFlopsOpenCL(const unsigned int iterations, const unsigned int vector, const std::string & dataType);
+std::string  * getFlopsOpenCL(const unsigned int iterations, const unsigned int vector, const std::string & dataType);
 
 
 // Implementations
